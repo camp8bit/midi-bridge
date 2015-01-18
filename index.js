@@ -1,5 +1,3 @@
-/*
-
 var SerialPort = require("serialport").SerialPort
 var serialPort = new SerialPort("/dev/tty.usbmodemfd111", {
   baudrate: 9600
@@ -11,8 +9,6 @@ serialPort.open(function (error) {
     console.log('results ' + results);
   });
 });
-
-*/
 
 var midi = require('midi');
 
@@ -36,10 +32,14 @@ input.on('message', function(deltaTime, message) {
     }
 
     if(cmd==120){
-      console.log("B" + "\n");
+      console.log("B");
+      serialPort.write("B" + "\n");
     }else{
       console.log(
         [Math.floor(message[1].toString() / 16), Math.floor(message[1].toString() % 16)].join("")
+      );
+      serialPort.write(
+        [Math.floor(message[1].toString() / 16), Math.floor(message[1].toString() % 16)].join("") + "\n"
       );
     }
   }
