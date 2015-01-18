@@ -1,3 +1,4 @@
+/*
 var SerialPort = require("serialport").SerialPort
 var serialPort = new SerialPort("/dev/tty.usbmodemfd111", {
   baudrate: 9600
@@ -9,7 +10,7 @@ serialPort.open(function (error) {
     console.log('results ' + results);
   });
 });
-
+*/
 var midi = require('midi');
 
 // Set up a new input.
@@ -33,14 +34,18 @@ input.on('message', function(deltaTime, message) {
 
     if(cmd==120){
       console.log("B");
-      serialPort.write("B" + "\n");
+      //serialPort.write("B" + "\n");
     }else{
+      var x = Math.floor(7 - Math.floor(message[1].toString() / 16)),
+          y = Math.floor(message[1].toString() % 16);
+
       console.log(
-        [Math.floor(message[1].toString() / 16), Math.floor(message[1].toString() % 16)].join("")
+        [x, y].join("")
       );
-      serialPort.write(
-        [Math.floor(message[1].toString() / 16), Math.floor(message[1].toString() % 16)].join("") + "\n"
-      );
+
+      // serialPort.write(
+      //   [x, y].join("") + "\n"
+      // );
     }
   }
 });
@@ -108,13 +113,13 @@ for(i=0;i<127;i++){
   output.sendMessage([144,i,colorFor(i)]);
 }
 
-var x = false,
+var blink = false,
   current = 0;
 
 setInterval(function(){
-  x = !x;
-  output.sendMessage([144,120,x ? 60 : 0]);
-  output.sendMessage([144,current,x ? 60 : 0]);
+  blink = !blink;
+  output.sendMessage([144,120,blink ? 60 : 0]);
+  output.sendMessage([144,current,blink ? 60 : 0]);
 }, 50);
 
 
