@@ -1,19 +1,23 @@
-/*
 var SerialPort = require("serialport").SerialPort
 var serialPort = new SerialPort("/dev/tty.usbmodemfd111", {
-  baudrate: 9600
+  baudrate: 57600
 });
 
 serialPort.open(function (error) {
-  serialPort.write("yo homies\r\n", function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
+  // serialPort.write("yo homies\r\n", function(err, results) {
+  //   console.log('err ' + err);
+  //   console.log('results ' + results);
+  // });
+
+  serialPort.on('data', function(data) {
+    console.log('>' + data);
   });
+
 });
-*/
+
 var midi = require('midi');
 
-// Set up a new input.
+// Set up a new input.  
 var input = new midi.input();
 
 // Count the available input ports.
@@ -34,18 +38,18 @@ input.on('message', function(deltaTime, message) {
 
     if(cmd==120){
       console.log("B");
-      //serialPort.write("B" + "\n");
+      serialPort.write("B" + "\n");
     }else{
-      var x = Math.floor(7 - Math.floor(message[1].toString() / 16)),
-          y = Math.floor(message[1].toString() % 16);
+      var y = Math.floor(7 - Math.floor(message[1].toString() / 16)),
+          x = Math.floor(message[1].toString() % 16);
 
       console.log(
         [x, y].join("")
       );
 
-      // serialPort.write(
-      //   [x, y].join("") + "\n"
-      // );
+      serialPort.write(
+        [x, y].join("") + "\n"
+      );
     }
   }
 });
